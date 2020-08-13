@@ -1,8 +1,23 @@
 language: generic
 sudo: required
+
 services:
   - docker
-before-install:
-  - docker build -t sultan/react-app -f Dockerfile.dev .
+
+before_install:
+  - docker build -t stephengrider/docker-react -f Dockerfile.dev .
+
 script:
-  - docker run -e CI=true sultan/react-app npm run test
+  - docker run -e CI=true stephengrider/docker-react npm run test
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-2'
+  app: 'react-docker'
+  env: 'ReactDocker-env'
+  bucket_name: 'elasticbeanstalk-us-east-2-760842919770'
+  bucket_path: 'react-docker'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
